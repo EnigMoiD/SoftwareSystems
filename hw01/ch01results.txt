@@ -1,0 +1,17 @@
+ki = 0.01
+RMS Error (4 runs)
+==================
+8.3
+7.4
+12.2
+7.5
+
+ki = 0
+RMS Error (4 runs)
+==================
+6.8
+6.7
+7.5
+9.7
+
+The system seemed to behave better without ki, if anything. It was difficult to detect any real qualitative changes between the two values of ki.
