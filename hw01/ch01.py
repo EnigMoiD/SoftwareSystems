@@ -45,14 +45,16 @@ class Buffer:
         return self.queued
 
 class Controller:
-    def __init__( self, kp, ki ):
+    def __init__( self, kp, ki, kd ):
         """Initializes the controller.
 
         kp: proportional gain
         ki: integral gain
+        kd: derivative gain
         """
-        self.kp, self.ki = kp, ki
+        self.kp, self.ki, self.kd = kp, ki, kd
         self.i = 0       # Cumulative error ("integral")
+        self.pe = 0      # Previous error (for derivative)
 
     def work( self, e ):
         """Computes the number of jobs to be added to the ready queue.
@@ -62,8 +64,11 @@ class Controller:
         returns: float number of jobs
         """
         self.i += e
+        res = self.kp*e + self.ki*self.i + self.kd*(e-self.pe)
 
-        return self.kp*e + self.ki*self.i
+        self.pe = e
+
+        return res
 
 # ============================================================
 
@@ -77,9 +82,7 @@ def closed_loop( c, p, tm=5000 ):
     returns: tuple of sequences (times, targets, errors)
     """
     def setpoint( t ):
-        if t < 100: return 0
-        if t < 300: return 50
-        return 10
+    	return t
     
     y = 0
     res = []
@@ -96,13 +99,13 @@ def closed_loop( c, p, tm=5000 ):
 
 # ============================================================
 
-c = Controller( 1.25, 0.01 )
+c = Controller( dt=, kp=1.25, ki=0, kd=0.01 )
 p = Buffer( 50, 10 )
 
 # run the simulation
 ts, rs, es, us, ys = closed_loop( c, p, 1000 )
 
-print 'RMS error', numpy.sqrt(numpy.mean(numpy.array(es)**2))
+print 'RMS error', numpy.std(es) # functionally identical
 
 # generate the smoothed curve using a rolling mean
 # (I think the curves in the book use loess)
