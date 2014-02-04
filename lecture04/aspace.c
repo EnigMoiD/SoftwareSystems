@@ -10,15 +10,22 @@ License: GNU GPLv3
 
 int global;
 
-int main ()
-{
-    int local = 5;
+void allocPointer() {
     void *p = malloc(128);
 
     printf ("Address of main is %p\n", main);
     printf ("Address of global is %p\n", &global);
     printf ("Address of local is %p\n", &local);
     printf ("Address of p is %p\n", p);
+}
+
+int main ()
+{
+    int local = 5;
+    allocPointer();
+    allocPointer();
+    allocPointer();
+    allocPointer();
     
     return 0;
 }
