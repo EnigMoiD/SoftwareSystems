@@ -39,11 +39,21 @@ void find_track(char search_for[])
 // http://pubs.opengroup.org/onlinepubs/7908799/xsh/regexec.html
 int match(char *string, char *pattern) {
     regex_t re;
-    if (regcomp(&re, pattern, REG_EXTENDED) != 0)
+    int error = regcomp(&re, pattern, REG_EXTENDED);
+    if (error != 0) {
+        fprintf(stderr, "Regex compilation failed. Error code: %d\n", error);
+        exit(1);
         return 0;
+    }
     int status = regexec(&re, string, (size_t) 0, NULL, 0);
     regfree(&re);
     if (status != 0) {
+        if (status != REG_NOMATCH) {
+            char errorString[100];
+            regerror(status, &re, errorString, 100);
+            fprintf(stderr, "%s\n", errorString);
+            exit(1);
+        }
         return 0;
     }
     return 1;
