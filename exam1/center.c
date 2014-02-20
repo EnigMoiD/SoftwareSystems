@@ -18,8 +18,19 @@ License: Creative Commons Attribution-ShareAlike 3.0
 
 char *center(char *s, int n, char fillchar)
 {
-    // FILL THIS IN
-    //    return NULL;
+    char *cstr = malloc(sizeof(char) * (n + 1));
+    cstr[n] = '\0';
+
+    int l = strlen(s),
+        start = (n - l)/2;
+
+    for (int i = 0; i < n; ++i)
+        cstr[i] = fillchar;
+
+    for (int i = start; i < start + l; ++i)
+        cstr[i] = s[i-start];
+
+    return cstr;
 }
 
 
