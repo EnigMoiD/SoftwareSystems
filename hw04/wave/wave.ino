@@ -35,23 +35,7 @@ void setup() {
 
   pinMode(ledPin, OUTPUT);
   
-  pinMode(13, OUTPUT);  
-  pinMode(12, OUTPUT);  
-  pinMode(11, OUTPUT);  
-  pinMode(10, OUTPUT);  
-  pinMode(9, OUTPUT);  
-  pinMode(8, OUTPUT);  
-  pinMode(7, OUTPUT);  
-  pinMode(6, OUTPUT);  
-}
-
-void writeByte(int x) {
-  int pin;
-  
-  for (pin=13; pin>=6; pin--) {
-    digitalWrite(pin, x&1);
-    x >>= 1;
-  }
+  DDRB = B11111111;
 }
 
 int counter = 0;
@@ -63,7 +47,7 @@ void loop() {
   Serial.print(", ");
 
   // write to the digital pins  
-  writeByte(counter);
+  PORTB = x;
   
   // read the value from the sensor:
   sensorValue = analogRead(sensorPin);
@@ -73,11 +57,10 @@ void loop() {
   int button2 = digitalRead(buttonPin2);
   
   // if either button is pressed, turn on the LED
-  if (button1 ^ button2) {
-      digitalWrite(ledPin, HIGH);  
-  } else {          
-      digitalWrite(ledPin, LOW);
-  }
+  if (button1 ^ button2)
+    digitalWrite(ledPin, HIGH);  
+  else
+    digitalWrite(ledPin, LOW);
 
   delay(400);  
 }
