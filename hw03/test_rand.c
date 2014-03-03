@@ -105,6 +105,24 @@ main (int argc, char *argv[])
   srandom (seed);
   t0 = get_seconds();
   for (i=0; i<iters; i++) {
+    f = my_random_float2();
+  }
+  t1 = get_seconds();
+  printf ("mine (no asm) \t %f ms\n", t1 - t0);
+   
+
+  srandom (seed);
+  t0 = get_seconds();
+  for (i=0; i<iters; i++) {
+    f = my_random_float2();
+  }
+  t1 = get_seconds();
+  printf ("mine (no asm) \t %f ms\n", t1 - t0);
+    
+
+  srandom (seed);
+  t0 = get_seconds();
+  for (i=0; i<iters; i++) {
     f = random_float();
   }
   t1 = get_seconds();
@@ -118,4 +136,13 @@ main (int argc, char *argv[])
   }
   t1 = get_seconds();
   printf ("theirs \t %f ms\n", t1 - t0);    
+    
+
+  srandom (seed);
+  t0 = get_seconds();
+  for (i=0; i<iters; i++) {
+    f = my_random_double();
+  }
+  t1 = get_seconds();
+  printf ("double double \t %f ms\n", t1 - t0);   
 }
