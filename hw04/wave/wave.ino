@@ -11,6 +11,7 @@
   equal the input value minus ~36.
  
   Author: Allen Downey 
+  Edited by: Evan Dorsky
  
   Based on http://arduino.cc/en/Tutorial/AnalogInput
   Created by David Cuartielles, modified by Tom Igoe.
@@ -47,11 +48,11 @@ void loop() {
   Serial.print(", ");
 
   // write to the digital pins  
-  PORTB = x;
+  PORTB = counter;
   
   // read the value from the sensor:
   sensorValue = analogRead(sensorPin);
-  Serial.println(sensorValue >> 2);
+  Serial.println(sensorValue);
   
   int button1 = digitalRead(buttonPin1);
   int button2 = digitalRead(buttonPin2);
