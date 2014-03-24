@@ -20,58 +20,57 @@
  
  */
  
+ #include "Waveforms.h"
  
-
-int sensorPin = A0;    // select the input pin for the potentiometer
-int ledPin = 5;       // select the pin for the LED
+int buttonInterrupt = 1;
+int buttonPin = 5;
 int sensorValue = 0;  // variable to store the value coming from the sensor
-int buttonPin1 = 2;
-int buttonPin2 = 3;
 
 void setup() {
   Serial.begin(9600);
   
-  pinMode(buttonPin1, INPUT_PULLUP);  
-  pinMode(buttonPin2, INPUT_PULLUP);  
-
-  pinMode(ledPin, OUTPUT);
+  pinMode(buttonPin, INPUT_PULLUP);
+  attachInterrupt(buttonInterrupt, buttonPress, FALLING);
   
-  DDRB = B11111100;
+  DDRB = B00111111;
   DDRD = DDRD | B11000000;
+
+  cli();//stop interrupts
+
+  //set timer0 interrupt at 2kHz
+  TCCR0A = 0;// set entire TCCR0A register to 0
+  TCCR0B = 0;// same for TCCR0B
+  TCNT0  = 0;//initialize counter value to 0
+  // set compare match register for 2khz increments
+  OCR0A = 240;// = (16*10^6) / (2000*64) - 1 (must be <256)
+  // turn on CTC mode
+  TCCR0A |= (1 << WGM01);
+  // Set CS01 and CS00 bits for 64 prescaler
+  TCCR0B |= (1 << CS01) | (1 << CS00);   
+  // enable timer compare interrupt
+  TIMSK0 |= (1 << OCIE0A);
+
+  sei();//allow interrupts
+}
+
+int wave0 = 0;
+
+void buttonPress() {
+  wave0 = (wave0+1) % 4;
+}
+
+int counter = 0, i = 0;
+
+ISR(TIMER0_COMPA_vect){//timer0 interrupt 2kHz toggles pin 8
+//generates pulse wave of frequency 2kHz/2 = 1kHz (takes two cycles for full wave- toggle high then toggle low)
+  i = (i+1) % maxSamplesNum;
+  writeByte(waveformsTable[wave0][i]);
 }
 
 void writeByte(int in) {
-  PORTB = in;
-  PORTD = in;
+  PORTB = (in >> 2);
+  PORTD = (in << 6);
 }
-
-void writeByteGood(int x) {
-  int pin;
-  
-  for (pin=13; pin>=6; pin--) {
-    digitalWrite(pin, x&1);
-    x >>= 1;
-  }
-}
-
-int counter = 0;
 
 void loop() {
-  counter += 8;
-  if (counter > 255) counter = 0;
-
-  // write to the digital pins
-  writeByte(counter);
-  
-  // read the value from the sensor:
-  sensorValue = analogRead(sensorPin);
-  
-  int button1 = digitalRead(buttonPin1);
-  int button2 = digitalRead(buttonPin2);
-  
-  // if either button is pressed, turn on the LED
-  if (button1 ^ button2)
-    digitalWrite(ledPin, HIGH);  
-  else
-    digitalWrite(ledPin, LOW);
 }
