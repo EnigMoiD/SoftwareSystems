@@ -49,13 +49,40 @@ int pop(Node **head) {
 
 // Add a new element to the beginning of the list.
 void push(Node **head, int val) {
-    // FILL THIS IN!
+    *head = make_node(val, *head);
+}
+
+// Returns a pointer to the node containining the specified value
+// or NULL if the list does not contain the value.
+Node *search_by_value(Node **head, int val) {
+    Node *current = *head;
+    while (current != NULL) {
+        if (current->val == val)
+            return current;
+        current = current->next;
+    }
+    return NULL;
 }
 
 // Remove the first element with the given value; return the number
 // of nodes removed.
 int remove_by_value(Node **head, int val) {
-    // FILL THIS IN!
+    if ((*head)->val == val) {
+        Node *old = *head;
+        *head = (*head)->next;
+        free(old);
+        return 1;
+    }
+    Node *current = *head;
+    while (current->next) {
+        if (current->next->val == val) {
+            Node *old = current;
+            current->next = current->next->next;
+            free(old);
+            return 1;
+        }
+        current = current->next;
+    }
     return 0;
 }
 
