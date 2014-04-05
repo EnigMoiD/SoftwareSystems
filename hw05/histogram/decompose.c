@@ -9,12 +9,10 @@ int main(int argc, char const *argv[])
 
 	g_print("GIOChannel Status: %d\n", channel_error);
 
-	gsize buff_size = 100000;
-	gchar* book = malloc(buff_size * sizeof(gchar));
-	gsize read = NULL;
+	gchar* book = NULL;
+	gsize length = NULL;
 	GError *book_error = NULL;
-	g_io_channel_read_chars(channel, book, buff_size, &read, &book_error);
-	g_print("%s\n", book);
+	g_io_channel_read_to_end(channel, &book, &length, &book_error);
 
 	g_print("GIOChannel Read Status: %d\n", book_error);
 }
