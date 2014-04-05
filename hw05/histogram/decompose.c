@@ -3,9 +3,7 @@
 int main(int argc, char const *argv[])
 {
 	GError *channel_error = NULL;
-	GIOChannel *channel = g_io_channel_new_file("great.txt",
-		"r",
-		&channel_error);
+	GIOChannel *channel = g_io_channel_new_file("great.txt", "r", &channel_error);
 
 	g_print("GIOChannel Status: %d\n", channel_error);
 
