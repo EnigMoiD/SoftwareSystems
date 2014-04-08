@@ -18,13 +18,22 @@ typedef struct {
 
 // Makes a new matrix and sets all elements to zero.
 Matrix *make_matrix(int rows, int cols) {
-    // Fill this in
-    return NULL;
+    Matrix *matrix = (Matrix*) malloc(sizeof(Matrix));
+    matrix->data = (double**) malloc(rows * sizeof(double*));
+
+    matrix->rows = rows;
+    matrix->cols = cols;
+    for (int i=0; i<matrix->rows; i++) {
+        matrix->data[i] = (double*) calloc(cols, sizeof(double));
+    }
+    return matrix;
 }
 
 // Prints the elements of a matrix.
 void print_matrix(Matrix *matrix) {
     int i, j;
+
+    printf("Print Matrix\n");
 
     for (i=0; i<matrix->rows; i++) {
 	for (j=0; j<matrix->cols; j++) {
@@ -81,15 +90,26 @@ Matrix *add_matrix_func(Matrix *A, Matrix *B) {
 // Performs matrix multiplication and stores the result in the given
 // destination matrix (C).
 void mult_matrix(Matrix *A, Matrix *B, Matrix *C) {
-    // Fill this in
-    // Note that it is asking for matrix multiplication, not
-    // elementwise multiplication
+    int i, j, k;
+
+    assert(A->cols == B->rows);
+    assert(A->rows == C->rows && B->cols == C->cols);
+
+    for (i=0; i<A->rows; i++) {
+        for (j=0; j<B->cols; j++) {
+            C->data[i][j] = 0;
+            for (k=0; k<A->cols; k++) {
+                C->data[i][j] += A->data[i][k] * B->data[k][j];
+            }
+        }
+    }
 }
 
 // Performs matrix multiplication and returns a new matrix.
 Matrix *mult_matrix_func(Matrix *A, Matrix *B) {
-    // Fill this in
-    return NULL;
+    Matrix *C = make_matrix(A->rows, B->cols);
+    mult_matrix(A, B, C);
+    return C;
 }
 
 int main() {
