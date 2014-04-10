@@ -192,7 +192,7 @@ int is_magic_square(Matrix* matrix) {
 
     // If we're here we know all the row sums are equal
     // So we only need to check one
-    if (colSum != rowSum[0])
+    if (lastColSum != rowSum[0])
         return 0;
 
     for (int i = 0; i < matrix->rows; i++) {
@@ -205,7 +205,7 @@ int is_magic_square(Matrix* matrix) {
     // If we're here we know all the column sums are equal to all the row sums
     // And the diagonal sums are equal
     // So we only need to check one from each
-    if (leftDiag != colSum)
+    if (leftDiag != lastColSum)
         return 0;
 
     return 1;
@@ -245,7 +245,15 @@ int main() {
     }
     // should print 6, 22, 38
 
-    printf("Matrix A is%s a magic square.\n", is_magic_square(A)? "": " not");
+    Matrix* zeros = make_matrix(3, 3);
+    print_matrix(zeros);    
+    printf("Matrix zeros is%s a magic square.\n", is_magic_square(zeros)? "": " not");
+    increment_matrix(zeros, 1);
+    print_matrix(zeros);
+    printf("Matrix ones is%s a magic square.\n", is_magic_square(zeros)? "": " not");
+    consecutive_matrix(zeros);
+    print_matrix(zeros);
+    printf("Matrix consecutive is%s a magic square.\n", is_magic_square(zeros)? "": " not");
 
     return 0;
 }
