@@ -169,6 +169,48 @@ double *row_sum(Matrix *A) {
    Feel free to use row_sum().
 */
 
+int is_magic_square(Matrix* matrix) {
+    assert(matrix->rows == matrix->cols);
+
+    double lastColSum = 0, colSum = 0, leftDiag = 0, rightDiag = 0;
+
+    double *rowSum = row_sum(matrix);
+
+    for (int i = 0; i < matrix->rows - 1; i++)
+        if (rowSum[i] != rowSum[i+1])
+            return 0;
+
+    for (int j = 0; j < matrix->cols; j++) {
+        for (int i = 0; i < matrix->rows; i++) {
+            colSum += matrix->data[i][j];
+        }
+        if (j != 0 && lastColSum != colSum)
+            return 0;
+        lastColSum = colSum;
+        colSum = 0;
+    }
+
+    // If we're here we know all the row sums are equal
+    // So we only need to check one
+    if (colSum != rowSum[0])
+        return 0;
+
+    for (int i = 0; i < matrix->rows; i++) {
+        leftDiag += matrix->data[i][i];
+        rightDiag += matrix->data[matrix->rows-1-i][matrix->rows-1-i];
+    }
+    if (leftDiag != rightDiag)
+        return 0;
+
+    // If we're here we know all the column sums are equal to all the row sums
+    // And the diagonal sums are equal
+    // So we only need to check one from each
+    if (leftDiag != colSum)
+        return 0;
+
+    return 1;
+}
+
 
 int main() {
     int i;
@@ -202,6 +244,8 @@ int main() {
 	printf("row %d\t%lf\n", i, sums[i]);
     }
     // should print 6, 22, 38
+
+    printf("Matrix A is%s a magic square.\n", is_magic_square(A)? "": " not");
 
     return 0;
 }
