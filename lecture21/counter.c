@@ -27,11 +27,10 @@ void *check_malloc(int size)
 
 typedef sem_t Semaphore;
 
-Semaphore *make_semaphore (int n)
+Semaphore *make_semaphore (char *name, int n)
 {
-  Semaphore *sem = check_malloc (sizeof(Semaphore));
-  int ret = sem_init(sem, 0, n);
-  if (ret == -1) perror_exit ("sem_init failed");
+  Semaphore *sem = sem_open(name, 0, 0, n);
+
   return sem;
 }
 
@@ -44,9 +43,10 @@ typedef struct {
   int counter;
   int end;
   int *array;
+  Semaphore *mutex;
 } Shared;
 
-Shared *make_shared (int end)
+Shared *make_shared (int end, char *name)
 {
   int i;
   Shared *shared = check_malloc (sizeof (Shared));
@@ -54,6 +54,7 @@ Shared *make_shared (int end)
   shared->counter = 0;
   shared->end = end;
 
+  shared->mutex = make_semaphore(name, 1);
   shared->array = check_malloc (shared->end * sizeof(int));
   for (i=0; i<shared->end; i++) {
     shared->array[i] = 0;
@@ -81,14 +82,16 @@ void child_code (Shared *shared)
 {
   printf ("Starting child at counter %d\n", shared->counter);
 
+  sem_wait(shared->mutex);
   while (1) {
     if (shared->counter >= shared->end) {
       return;
     }
     shared->array[shared->counter]++;
     shared->counter++;
+    sem_signal(shared->mutex);
 
-    if (shared->counter % 10000 == 0) {
+    if (shared->counter % 100000 == 0) {
       printf ("%d\n", shared->counter);
     }
   }
@@ -119,7 +122,7 @@ int main ()
   int i;
   pthread_t child[NUM_CHILDREN];
 
-  Shared *shared = make_shared (100000000);
+  Shared *shared = make_shared ("stobe", 100000000);
 
   for (i=0; i<NUM_CHILDREN; i++) {
     child[i] = make_thread (entry, shared);
