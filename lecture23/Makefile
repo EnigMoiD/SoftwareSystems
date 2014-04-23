@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -g -Wall -I/usr/include/glib-2.0 -I/usr/lib/x86_64-linux-gnu/glib-2.0/include
-LIBS = -lglib-2.0  
+CFLAGS = -g -Wall `pkg-config --cflags --libs glib-2.0`
+LIBS = -lglib-2.0   
 DEPS = 
 OBJ = glibhash.o
 
