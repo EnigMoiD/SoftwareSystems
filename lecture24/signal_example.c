@@ -28,9 +28,25 @@ int catch_signal(int sig, void (*handler) (int)) {
     return sigaction(sig, &action, NULL);
 }
 
+void ask_question() {
+    int a, b, answer;
+    char txt[4];
+    a = rand() % 11;
+    b = rand() % 11;
+    printf("\nWhat is %d times %d? ", a, b);
+    answer = atoi(txt);
+    
+    if (answer == a * b) {
+        score++;
+    } else {
+        printf("\nWrong! Score: %i\n", score);
+    }
+}
+
 void end_game(int sig)
 {
     printf("\nFinal score: %i\n", score);
+    ask_question();
     exit(EXIT_SUCCESS);
 }
 
